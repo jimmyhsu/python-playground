@@ -1,4 +1,3 @@
-# API Services: Class 4 - 10/03/2016
 # Google Translate API Challenge
 #
 # 1. Create a Python wrapper function for Translate:
