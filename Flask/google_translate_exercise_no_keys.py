@@ -29,41 +29,42 @@ TWILIO_AUTH_TOKEN = "----------------------------------------------"
 client = TwilioRestClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 http = httplib2.Http()
 
+
 def getFirstTumblrPostByTag(tag):
-  print(urllib2.quote(tag.encode('utf-8')))
-  tagEncoded = urllib2.quote(tag.encode('utf-8'))
-  responseTumblr, bodyTumblr = http.request("https://api.tumblr.com/v2/tagged?tag=" + tagEncoded + "&api_key=----------------------------------------------", "GET")
+    print(urllib2.quote(tag.encode('utf-8')))
+    tagEncoded = urllib2.quote(tag.encode('utf-8'))
+    responseTumblr, bodyTumblr = http.request("https://api.tumblr.com/v2/tagged?tag=" + tagEncoded + "&api_key=----------------------------------------------", "GET")
 
-  # print("https://api.tumblr.com/v2/tagged?tag=" + tag + "&api_key=----------------------------------------------")
+    # print("https://api.tumblr.com/v2/tagged?tag=" + tag + "&api_key=----------------------------------------------")
 
-  try:
-    parsed_body_tumblr = json.loads(bodyTumblr)
-  except Exception as e:
-    print "Unable to parse Tumblr JSON, %s" % (e)
+    try:
+        parsed_body_tumblr = json.loads(bodyTumblr)
+    except Exception as e:
+        print("Unable to parse Tumblr JSON, %s" % (e))
 
-  print(parsed_body_tumblr['response'])
-  if parsed_body_tumblr['response'] == []:
-    tumblrTagSearchPostURL = 'None Found :('
-    return tumblrTagSearchPostURL
-  else:
-    tumblrTagSearchPostURL = parsed_body_tumblr['response'][0]['post_url']
-    return tumblrTagSearchPostURL
+        print(parsed_body_tumblr['response'])
+    if parsed_body_tumblr['response'] == []:
+        tumblrTagSearchPostURL = 'None Found :('
+        return tumblrTagSearchPostURL
+    else:
+        tumblrTagSearchPostURL = parsed_body_tumblr['response'][0]['post_url']
+        return tumblrTagSearchPostURL
 
 
 def translate(textArray, languageCode):
-  "Sends text to Google for translation for the specified language code."
+    "Sends text to Google for translation for the specified language code."
 
-  translatedTexts = [];
+    translatedTexts = []
 
-  for text in textArray:
-    translateURL = "https://www.googleapis.com/language/translate/v2?key=%s&source=en&target=%s&q=" % (GOOGLE_API_KEY, languageCode)
-    textEncoded = urllib2.quote(text)
-    response, body = http.request(translateURL + textEncoded, "GET")
+    for text in textArray:
+        translateURL = "https://www.googleapis.com/language/translate/v2?key=%s&source=en&target=%s&q=" % (GOOGLE_API_KEY, languageCode)
+        textEncoded = urllib2.quote(text)
+        response, body = http.request(translateURL + textEncoded, "GET")
 
     try:
-      parsed_body = json.loads(body)
+        parsed_body = json.loads(body)
     except Exception as e:
-      print 'Unable to parse Google JSON'
+        print('Unable to parse Google JSON')
 
     # Goal: get translatedText it of the parsed JSON document
     translations = parsed_body['data']['translations']
@@ -75,11 +76,12 @@ def translate(textArray, languageCode):
     tumblrPost = getFirstTumblrPostByTag(firstTranslation['translatedText'])
 
     client.messages.create(
-      to="9254007476",
-      from_="+14153196608",
-      body="\n"+"Untranslated Text: "+text+"\n"+"Translated Text: "+firstTranslation['translatedText'] + "\n" + "First Tumblr Post: " + tumblrPost
+        to="9254007476",
+        from_="+14153196608",
+        body="\n"+"Untranslated Text: "+text+"\n"+"Translated Text: "+firstTranslation['translatedText'] + "\n" + "First Tumblr Post: " + tumblrPost
     )
 
-  return translatedTexts
+    return translatedTexts
+
 
 print(translate(['doge', 'pepe', 'library', 'cars', 'trump', 'skateboard', 'table', 'chair'], 'fr'))

@@ -5,6 +5,7 @@ app = Flask(__name__)
 # However, this isn't the best on space complexity as I'm duplicating the pet name entry
 pet_list = {}
 
+
 # allow for / or none at all
 @app.route('/hello/', methods=['GET'])
 @app.route('/hello', methods=['GET'])
@@ -13,6 +14,7 @@ def hello():
     Return string "Hello World!"
     """
     return "Hello World!"
+
 
 @app.route('/pets/', methods=['GET', 'POST'])
 @app.route('/pets', methods=['GET', 'POST'])
@@ -29,15 +31,16 @@ def pets_route():
                 pet_list[json_pet['name'].lower()] = json_pet
                 return json.jsonify(json_pet), 201
             # else:
-            return json.jsonify({'message': '%s is already in database' % (json_pet['name'].lower()) }), 409
+            return json.jsonify({'message': '%s is already in database' % (json_pet['name'].lower())}), 409
         # else:
         return json.jsonify({'message': 'Missing: name, age, or species'}), 400
 
     # Give full list of pets if just GET /pets
     return json.jsonify(pet_list)
 
-@app.route('/pets/<name>/', methods=['GET','PUT','DELETE'])
-@app.route('/pets/<name>', methods=['GET','PUT','DELETE'])
+
+@app.route('/pets/<name>/', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/pets/<name>', methods=['GET', 'PUT', 'DELETE'])
 def pet_name_route(nameInput):
     """
     Retrieve, Update, or Remove a specific pet
@@ -62,7 +65,8 @@ def pet_name_route(nameInput):
         return json.jsonify(pet_list[name])
 
     # pet can't be found for any of the methods
-    return json.jsonify({'message': 'Can\'t find this specific pet' }), 404
+    return json.jsonify({'message': 'Can\'t find this specific pet'}), 404
+
 
 def validate_pet(json):
     """
@@ -71,6 +75,7 @@ def validate_pet(json):
     if 'name' in json and 'age' in json and 'species' in json:
         return True
     return False
+
 
 if __name__ == "__main__":
     app.run()
